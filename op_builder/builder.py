@@ -431,8 +431,9 @@ class OpBuilder(ABC):
 
     def is_cuda_enable(self):
         try:
-            assert_no_cuda_mismatch(self.name)
-            return '-D__ENABLE_CUDA__'
+            if not self.is_rocm_pytorch():
+                assert_no_cuda_mismatch(self.name)
+                return '-D__ENABLE_CUDA__'
         except MissingCUDAException:
             print(f"{WARNING} {self.name} cuda is missing or is incompatible with installed torch, "
                   "only cpu ops can be compiled!")
